@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import java.io.*;
 import java.util.*;
 
@@ -17,6 +18,28 @@ public class NotesAppWeb {
     public static void main(String[] args) {
         loadNotes();
         SpringApplication.run(NotesAppWeb.class, args);
+    }
+    
+    @GetMapping
+    public String getNotes(Model model) {
+        model.addAttribute("notes", notes);
+        return "notes";
+    }
+    
+    @PostMapping
+    public String addNote(@RequestParam String note) {
+        notes.add(note);
+        saveNotes();
+        return "redirect:/notes";
+    }
+    
+    @PostMapping("/delete")
+    public String deleteNote(@RequestParam int index) {
+        if (index >= 0 && index < notes.size()) {
+            notes.remove(index);
+            saveNotes();
+        }
+        return "redirect:/notes";
     }
     
     private static void loadNotes() {
@@ -41,4 +64,3 @@ public class NotesAppWeb {
         }
     }
 }
-
